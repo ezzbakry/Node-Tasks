@@ -62,6 +62,7 @@ const updateOne = async (req, res) => {
 
 const createOne = (req, res) => {
     let newtodo = req.body
+    newtodo.userId=req.id;
     let insertedtodo = todosmodel.create(newtodo).then(() => {
         res.json({ message: "created", data: newtodo })
 

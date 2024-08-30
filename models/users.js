@@ -20,16 +20,21 @@ const users=mongoose.Schema({
         }
 
 
+    },role:{
+        type:String,
+        default:"user",
+        enum:["user","admin"]
     },
     password:{
         type:String,
         required:[true,"password is required"],
         validate:{
             validator:function(val){
-                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{13,}$/.test(val)
+                return /^[a-zA-Z0-9]{3,15}[@.?-_=]/.test(val)
             },
             message:()=>`invalid email or password`
         }
+        
 
     }
 

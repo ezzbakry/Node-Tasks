@@ -1,4 +1,8 @@
 const fs=module.require("fs")
+var jwt =module.require('jsonwebtoken');
+const bcrypt = module.require('bcrypt');
+
+
 const usermodel=module.require("../models/users.js")
 const getall=async(req,res)=>{
     // let users=JSON.parse(fs.readFileSync("../users.json","utf-8"))
@@ -57,7 +61,6 @@ const updateOne = async (req, res) => {
     }
 const createone = (req,res)=>{
     let newuser=req.body
-    console.log(newuser)
     let inserteduser=usermodel.create(newuser).then(()=>{
         res.json({message:"created",data:newuser})
     }).catch((err)=>{
@@ -78,8 +81,22 @@ const deleteOne =async (req, res) => {
     }
 
 }
-const login=(req,res)=>{
-    
+const login=async(req,res)=>{
+    let{email,password}=req.body;
+    if(!email||!password){
+        return res.json({message:"required"})
+    }
+    let user=await usermodel.findOne({email:email})
+    if(!user){
+        return res.json({message:"invalid email or password"})
+    }
+    let isvalid=await bcrypt.compare(password,user.password)
+    if(!isvalid){
+        return res.json({message:"invalid email or password "})
+
+    }
+    let token=jwt.sign({data:{email:user.email,id:user._id,role:user.role}},process.env.secret,{expiresIn:"2h"})
+    return res.json({message:"success",token:token})
 }
 
 module.exports={getall,getByid,createone,updateOne,deleteOne,login}

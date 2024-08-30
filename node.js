@@ -19,18 +19,28 @@
 const fs = module.require('fs');
 const express = module.require('express')
 const bcrypt = module.require('bcrypt');
-
+const dotenv=module.require('dotenv')
+dotenv.config()
+const cors=module.require('cors')
 const app = express();
 let todosRoutes=module.require('./routes/todos')
 let usersRoutes=module.require('./routes/users')
 app.use(express.json());
 app.use("/todos",todosRoutes)
 app.use("/users",usersRoutes)
+app.use("*",(req,res,next)=>{
+    res.json({message:`you can not access this route ${req.originalUrl}`})
+    next();
+})
+app.use(cors({
+    origin:"*"
+    // methods:["GET","POST"]
+}))
 // app.use("/todos/count",todosRoutes)
 
 
 const mongoose = module.require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/tasks').then(()=>{
+mongoose.connect('mongodb+srv://ezzeldenamer:1234@cluster0.6jmg9.mongodb.net/tasks').then(()=>{
     console.log("connected")
 }).catch((err)=>{
     console.log(err)
