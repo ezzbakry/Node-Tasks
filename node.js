@@ -27,7 +27,10 @@ let todosRoutes=module.require('./routes/todos')
 let usersRoutes=module.require('./routes/users')
 app.use(express.json());
 app.use("/todos",todosRoutes)
-app.use("/users",usersRoutes)
+app.use("/users",cors({
+    origin:"http://localhost:5173",
+    methods:["GET","POST"]
+}),usersRoutes)
 app.use("*",(req,res,next)=>{
     res.json({message:`you can not access this route ${req.originalUrl}`})
     next();
